@@ -5,7 +5,6 @@ export class Calculator extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      loggedResults: null,
       number1: "",
       number2: "",
       calculation: "",
@@ -37,15 +36,11 @@ export class Calculator extends Component {
   handleValidation = (event) => {
     // Checks to see if the form has all the correct inputs
     const form = event.currentTarget;
-    if (form.checkValidity()) {
-      this.setState({
-        isValid: true,
-      });
-      return true;
-    }
+
+    if (form.checkValidity()) this.setState({ isValid: true });
   };
 
-  logResult = () => {
+  exportResults = () => {
     const a = document.createElement("a");
     const file = new Blob([JSON.stringify(this.state, null, 2)], {
       type: "application/json",
@@ -60,7 +55,12 @@ export class Calculator extends Component {
     event.preventDefault();
 
     if (this.handleValidation(event)) {
-      // replace this case statement with a dictionary
+      if (this.state.number1 >= 0 && this.state.number1 <= 1) {
+        console.log("correct");
+      } else {
+        console.log("too big");
+      }
+
       switch (this.state.calculation) {
         case "combinedWith":
           this.setState({
@@ -75,7 +75,7 @@ export class Calculator extends Component {
         default:
           break;
       }
-      this.logResult();
+      // this.exportResults();
     } else {
       // if form is not valid, clear result
       this.setState({
@@ -157,6 +157,9 @@ export class Calculator extends Component {
               <h6>Result: </h6>
               {this.state.result}
             </Alert>
+            <Button onClick={this.exportResults} variant="secondary">
+              Export
+            </Button>
           </Card.Body>
         </Card>
       </Container>
