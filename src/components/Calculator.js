@@ -5,21 +5,12 @@ export class Calculator extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      loggedResults: null,
       number1: "",
       number2: "",
-      algorithm: "",
+      calculation: "",
       result: "",
       isValid: false,
-      dropdown: [
-        {
-          label: "Combined With",
-          value: "combinedWith",
-        },
-        {
-          label: "Either",
-          value: "either",
-        },
-      ],
     };
   }
 
@@ -54,12 +45,23 @@ export class Calculator extends Component {
     }
   };
 
+  logResult = () => {
+    const a = document.createElement("a");
+    const file = new Blob([JSON.stringify(this.state, null, 2)], {
+      type: "application/json",
+    });
+    a.href = URL.createObjectURL(file);
+    const filename = "results.json";
+    a.setAttribute("download", filename);
+    a.click();
+  };
+
   calculate = (event) => {
     event.preventDefault();
 
     if (this.handleValidation(event)) {
       // replace this case statement with a dictionary
-      switch (this.state.algorithm) {
+      switch (this.state.calculation) {
         case "combinedWith":
           this.setState({
             result: this.handleCombinedWith(),
@@ -73,10 +75,11 @@ export class Calculator extends Component {
         default:
           break;
       }
+      this.logResult();
     } else {
-      // if form is not valid, reset result
+      // if form is not valid, clear result
       this.setState({
-        result: "",
+        // result: "",
       });
     }
   };
@@ -124,22 +127,24 @@ export class Calculator extends Component {
               </Form.Row>
               <Form.Row>
                 <Col>
-                  <Form.Group controlId="algorithm">
-                    <Form.Label>Algorithm</Form.Label>
+                  <Form.Group controlId="calculation">
+                    <Form.Label>Calculation</Form.Label>
                     <Form.Control
                       as="select"
                       required
-                      name="algorithm"
+                      name="calculation"
                       placeholder=""
-                      value={this.state.algorithm}
+                      value={this.state.calculation}
                       onChange={this.handleInput}
                     >
-                      <option key="" value=""></option>
-                      {this.state.dropdown.map((algorithm) => (
-                        <option key={algorithm.value} value={algorithm.value}>
-                          {algorithm.label}
-                        </option>
-                      ))}
+                      {/* Could create a dict and map through this */}
+                      <option></option>
+                      <option key="combinedWith" value="combinedWith">
+                        Combined With
+                      </option>
+                      <option key="either" value="either">
+                        Either
+                      </option>
                     </Form.Control>
                   </Form.Group>
                 </Col>
