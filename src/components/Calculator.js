@@ -13,6 +13,23 @@ export class Calculator extends Component {
     };
   }
 
+  getData = async () => {
+    const options = {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        number1: this.state.number1,
+        number2: this.state.number2,
+      }),
+    };
+
+    const res = await fetch("http://localhost:8080/calc/either", options);
+    console.log(res);
+    const data = await res.json();
+
+    console.log(data);
+  };
+
   handleInput = (event) => {
     const value = event.target.value;
     const target = event.target.id.toLowerCase(); // using id instead of setting an explicit "name" on each input
@@ -20,6 +37,7 @@ export class Calculator extends Component {
       ...this.state,
       [target]: value,
     });
+    console.log(this.state);
   };
 
   handleCombinedWith = () => {
@@ -38,17 +56,6 @@ export class Calculator extends Component {
     const form = event.currentTarget;
 
     if (form.checkValidity()) this.setState({ isValid: true });
-  };
-
-  exportResults = () => {
-    const a = document.createElement("a");
-    const file = new Blob([JSON.stringify(this.state, null, 2)], {
-      type: "application/json",
-    });
-    a.href = URL.createObjectURL(file);
-    const filename = "results.json";
-    a.setAttribute("download", filename);
-    a.click();
   };
 
   calculate = (event) => {
@@ -157,8 +164,8 @@ export class Calculator extends Component {
               <h6>Result: </h6>
               {this.state.result}
             </Alert>
-            <Button onClick={this.exportResults} variant="secondary">
-              Export
+            <Button onClick={this.getData} variant="danger">
+              Fetch
             </Button>
           </Card.Body>
         </Card>
