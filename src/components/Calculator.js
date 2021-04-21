@@ -13,7 +13,7 @@ export class Calculator extends Component {
     };
   }
 
-  getData = async () => {
+  fetchData = async () => {
     const options = {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -23,11 +23,20 @@ export class Calculator extends Component {
       }),
     };
 
-    const res = await fetch("http://localhost:8080/calc/either", options);
-    console.log(res);
+    console.log(this.state.calculation);
+
+    const res = await fetch(
+      `http://localhost:8080/calc/${this.state.calculation}`,
+      options
+    );
+    // const res = await fetch(`http://localhost:8080/calc/${route}`, options);
     const data = await res.json();
 
-    console.log(data);
+    this.setState({
+      result: data.result,
+    });
+
+    console.log(this.state);
   };
 
   handleInput = (event) => {
@@ -40,55 +49,10 @@ export class Calculator extends Component {
     console.log(this.state);
   };
 
-  handleCombinedWith = () => {
-    return parseFloat(this.state.number1) * parseFloat(this.state.number2);
-  };
-
-  handleEither = () => {
-    const number1 = parseFloat(this.state.number1);
-    const number2 = parseFloat(this.state.number2);
-    const result = number1 + number2 - number1 * number2;
-    return result;
-  };
-
   handleValidation = (event) => {
     // Checks to see if the form has all the correct inputs
     const form = event.currentTarget;
-
     if (form.checkValidity()) this.setState({ isValid: true });
-  };
-
-  calculate = (event) => {
-    event.preventDefault();
-
-    if (this.handleValidation(event)) {
-      if (this.state.number1 >= 0 && this.state.number1 <= 1) {
-        console.log("correct");
-      } else {
-        console.log("too big");
-      }
-
-      switch (this.state.calculation) {
-        case "combinedWith":
-          this.setState({
-            result: this.handleCombinedWith(),
-          });
-          break;
-        case "either":
-          this.setState({
-            result: this.handleEither(),
-          });
-          break;
-        default:
-          break;
-      }
-      // this.exportResults();
-    } else {
-      // if form is not valid, clear result
-      this.setState({
-        // result: "",
-      });
-    }
   };
 
   render() {
@@ -144,9 +108,8 @@ export class Calculator extends Component {
                       value={this.state.calculation}
                       onChange={this.handleInput}
                     >
-                      {/* Could create a dict and map through this */}
                       <option></option>
-                      <option key="combinedWith" value="combinedWith">
+                      <option key="combined" value="combined">
                         Combined With
                       </option>
                       <option key="either" value="either">
@@ -156,16 +119,15 @@ export class Calculator extends Component {
                   </Form.Group>
                 </Col>
               </Form.Row>
-              <Button type="submit" variant="primary">
-                Submit
-              </Button>
             </Form>
+            // try this
+            https://www.digitalocean.com/community/tutorials/7-ways-to-implement-conditional-rendering-in-react-applications
             <Alert className="mt-3 result-box" variant="success">
               <h6>Result: </h6>
               {this.state.result}
             </Alert>
-            <Button onClick={this.getData} variant="danger">
-              Fetch
+            <Button onClick={this.fetchData} variant="primary">
+              Calculate
             </Button>
           </Card.Body>
         </Card>
