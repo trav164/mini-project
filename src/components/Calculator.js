@@ -1,5 +1,6 @@
 import React, { Component } from "react";
-import { Container, Card, Button, Form, Col, Alert } from "react-bootstrap";
+import { Container, Card, Button, Form, Col } from "react-bootstrap";
+import ResultAlert from "./ResultAlert";
 
 export class Calculator extends Component {
   constructor(props) {
@@ -120,12 +121,7 @@ export class Calculator extends Component {
                 </Col>
               </Form.Row>
             </Form>
-            // try this
-            https://www.digitalocean.com/community/tutorials/7-ways-to-implement-conditional-rendering-in-react-applications
-            <Alert className="mt-3 result-box" variant="success">
-              <h6>Result: </h6>
-              {this.state.result}
-            </Alert>
+            <ResultAlert {...this.state} />
             <Button onClick={this.fetchData} variant="primary">
               Calculate
             </Button>
