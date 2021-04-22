@@ -6,15 +6,12 @@ export class Calculator extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      number1: "",
-      number2: "",
-      calculation: "",
+      number1: { value: "", isInvalid: false },
+      number2: { value: "", isInvalid: false },
+      calculation: "combined", // force default value
       result: "",
-      isValid: false,
     };
-
-    // preserve initial state
-    this.baseState = this.state;
+    this.baseState = this.state; // preserve original state
   }
 
   fetchCalculation = async () => {
@@ -22,10 +19,12 @@ export class Calculator extends Component {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        number1: this.state.number1,
-        number2: this.state.number2,
+        number1: this.state.number1.value,
+        number2: this.state.number2.value,
       }),
     };
+
+    console.log(this.state);
 
     const res = await fetch(
       `http://localhost:8080/calc/${this.state.calculation}`,
@@ -33,7 +32,7 @@ export class Calculator extends Component {
     );
 
     const data = await res.json();
-
+    console.log(data);
     this.setState({
       result: data.result,
     });
@@ -41,35 +40,20 @@ export class Calculator extends Component {
 
   handleInput = (event) => {
     const value = event.target.value;
-    const target = event.target.id.toLowerCase(); // using id instead of setting an explicit "name" on each input
-    this.setState({
-      ...this.state,
-      [target]: value,
-    });
-  };
-
-  validate = () => {
-    const x = this.state.number1;
-    const y = this.state.number2;
-
-    // THIS IS SHOCKING
-    if (x >= 0 && x <= 1 && y >= 0 && y <= 1) {
-      this.setState({ isValid: true });
-      return true;
-    }
-    return false;
+    const target = event.target.id; // using id instead of setting an explicit "name" on each input
+    let isInvalid;
+    if (value < 0 || value > 1) isInvalid = true;
+    else isInvalid = false;
+    this.setState({ [target]: { value: value, isInvalid: isInvalid } });
   };
 
   handleSubmit = (event) => {
     event.preventDefault();
-    console.log(this.validate());
-    if (this.validate()) {
-      this.fetchCalculation();
+    if (this.state.number1.isInvalid || this.state.number2.isInvalid) {
+      console.log("Part of the form is invalid");
     } else {
-      this.setState({
-        isValid: false,
-        result: "",
-      });
+      console.log("Form is ready for submitting");
+      this.fetchCalculation();
     }
   };
 
@@ -98,10 +82,15 @@ export class Calculator extends Component {
                     <Form.Control
                       required
                       name="number1"
+                      placeholder=""
                       type="number"
-                      value={this.state.number1}
+                      value={this.state.number1.value}
                       onChange={this.handleInput}
+                      isInvalid={this.state.number1.isInvalid}
                     />
+                    <Form.Control.Feedback type="invalid">
+                      The number you entered is outside of the acceptable range.
+                    </Form.Control.Feedback>
                   </Form.Group>
                 </Col>
                 <Col>
@@ -110,10 +99,15 @@ export class Calculator extends Component {
                     <Form.Control
                       required
                       name="number2"
+                      placeholder=""
                       type="number"
-                      value={this.state.number2}
+                      value={this.state.number2.value}
                       onChange={this.handleInput}
+                      isInvalid={this.state.number2.isInvalid}
                     />
+                    <Form.Control.Feedback type="invalid">
+                      The number you entered is outside of the acceptable range.
+                    </Form.Control.Feedback>
                   </Form.Group>
                 </Col>
               </Form.Row>
@@ -126,31 +120,36 @@ export class Calculator extends Component {
                       required
                       name="calculation"
                       value={this.state.calculation}
-                      onChange={this.handleInput}
+                      onChange={(e) =>
+                        this.setState({ calculation: e.target.value })
+                      }
                     >
-                      <option value="" disabled selected></option>
-                      <option key="combined" value="combined">
-                        Combined With
-                      </option>
-                      <option key="either" value="either">
-                        Either
-                      </option>
+                      <option label="Combined With" value="combined" />
+                      <option label="Either" value="either" />
                     </Form.Control>
                   </Form.Group>
                 </Col>
               </Form.Row>
-              <Button type="submit" variant="primary">
+              <Button
+                disabled={
+                  this.state.number1.isInvalid || this.state.number2.isInvalid
+                    ? true
+                    : false
+                }
+                type="submit"
+                variant="primary"
+              >
                 Calculate
               </Button>
               <Button
-                className="ml-3"
+                className="ml-2"
                 variant="secondary"
                 onClick={this.resetForm}
               >
                 Reset
               </Button>
             </Form>
-            <ResultAlert {...this.state} />
+            <ResultAlert result={this.state.result} />
           </Card.Body>
         </Card>
       </Container>

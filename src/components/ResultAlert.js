@@ -1,16 +1,17 @@
 import React from "react";
 
-const ResultAlert = (props) => {
-  // Wouldn't send the full parent state to child component
-  if (typeof props.result === "number") {
+const ResultAlert = ({ result }) => {
+  if (typeof result === "number") {
     return (
       <h4 className="mt-3">
-        Result: <strong>{props.result}</strong>
+        Result: <strong>{result}</strong>
       </h4>
     );
   }
 
   return null;
 };
+
+// could use prop types
 
 export default ResultAlert;
