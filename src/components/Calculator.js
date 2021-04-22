@@ -45,16 +45,23 @@ export class Calculator extends Component {
     });
   };
 
-  validate = (event) => {
-    // Checks to see if the form has all the correct inputs
-    const form = event.currentTarget;
-    if (form.checkValidity()) this.setState({ isValid: true });
+  validate = () => {
+    const x = this.state.number1;
+    const y = this.state.number2;
+
+    // THIS IS SHOCKING
+    if (x > 0 && x <= 1 && y > 0 && y <= 1) {
+      this.setState({ isValid: true });
+      return true;
+    }
+    return false;
   };
 
   handleSubmit = (event) => {
     event.preventDefault();
-    // check validation is all cool
-    // fetch data
+    if (this.validate()) {
+      this.fetchCalculation();
+    }
   };
 
   render() {
@@ -66,8 +73,8 @@ export class Calculator extends Component {
           </Card.Header>
           <Card.Body>
             <Form
-              noValidate
-              validated={this.state.isValid}
+              // noValidate
+              // validated={this.state.isValid}
               onSubmit={this.handleSubmit}
             >
               <Form.Row>
