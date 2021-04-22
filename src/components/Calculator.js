@@ -12,6 +12,9 @@ export class Calculator extends Component {
       result: "",
       isValid: false,
     };
+
+    // preserve initial state
+    this.baseState = this.state;
   }
 
   fetchCalculation = async () => {
@@ -59,9 +62,19 @@ export class Calculator extends Component {
 
   handleSubmit = (event) => {
     event.preventDefault();
+    console.log(this.validate());
     if (this.validate()) {
       this.fetchCalculation();
+    } else {
+      this.setState({
+        isValid: false,
+        result: "",
+      });
     }
+  };
+
+  resetForm = () => {
+    this.setState(this.baseState);
   };
 
   render() {
@@ -132,7 +145,15 @@ export class Calculator extends Component {
               <Button type="submit" variant="primary">
                 Calculate
               </Button>
+              <Button
+                className="ml-3"
+                variant="secondary"
+                onClick={this.resetForm}
+              >
+                Reset
+              </Button>
             </Form>
+
             <ResultAlert {...this.state} />
           </Card.Body>
         </Card>
