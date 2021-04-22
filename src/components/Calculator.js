@@ -50,7 +50,7 @@ export class Calculator extends Component {
     const y = this.state.number2;
 
     // THIS IS SHOCKING
-    if (x > 0 && x <= 1 && y > 0 && y <= 1) {
+    if (x >= 0 && x <= 1 && y >= 0 && y <= 1) {
       this.setState({ isValid: true });
       return true;
     }
@@ -72,6 +72,7 @@ export class Calculator extends Component {
             <h4>Probability Calculator</h4>
           </Card.Header>
           <Card.Body>
+            <p>Values 0 to 1 e.g. 0.5 is valid while 1.1 or -0.1 is invalid</p>
             <Form
               // noValidate
               // validated={this.state.isValid}
