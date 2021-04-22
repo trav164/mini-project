@@ -14,7 +14,7 @@ export class Calculator extends Component {
     };
   }
 
-  fetchData = async () => {
+  fetchCalculation = async () => {
     const options = {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -24,20 +24,16 @@ export class Calculator extends Component {
       }),
     };
 
-    console.log(this.state.calculation);
-
     const res = await fetch(
       `http://localhost:8080/calc/${this.state.calculation}`,
       options
     );
-    // const res = await fetch(`http://localhost:8080/calc/${route}`, options);
+
     const data = await res.json();
 
     this.setState({
       result: data.result,
     });
-
-    console.log(this.state);
   };
 
   handleInput = (event) => {
@@ -47,13 +43,18 @@ export class Calculator extends Component {
       ...this.state,
       [target]: value,
     });
-    console.log(this.state);
   };
 
-  handleValidation = (event) => {
+  validate = (event) => {
     // Checks to see if the form has all the correct inputs
     const form = event.currentTarget;
     if (form.checkValidity()) this.setState({ isValid: true });
+  };
+
+  handleSubmit = (event) => {
+    event.preventDefault();
+    // check validation is all cool
+    // fetch data
   };
 
   render() {
@@ -67,7 +68,7 @@ export class Calculator extends Component {
             <Form
               noValidate
               validated={this.state.isValid}
-              onSubmit={this.calculate}
+              onSubmit={this.handleSubmit}
             >
               <Form.Row>
                 <Col>
@@ -120,11 +121,11 @@ export class Calculator extends Component {
                   </Form.Group>
                 </Col>
               </Form.Row>
+              <Button type="submit" variant="primary">
+                Calculate
+              </Button>
             </Form>
             <ResultAlert {...this.state} />
-            <Button onClick={this.fetchData} variant="primary">
-              Calculate
-            </Button>
           </Card.Body>
         </Card>
       </Container>
