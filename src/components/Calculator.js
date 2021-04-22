@@ -14,7 +14,8 @@ export class Calculator extends Component {
     this.baseState = this.state; // preserve original state
   }
 
-  fetchCalculation = async () => {
+  fetchCalculation = () => {
+    const url = `http://localhost:8080/calc/${this.state.calculation}`;
     const options = {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -24,18 +25,13 @@ export class Calculator extends Component {
       }),
     };
 
-    console.log(this.state);
-
-    const res = await fetch(
-      `http://localhost:8080/calc/${this.state.calculation}`,
-      options
-    );
-
-    const data = await res.json();
-    console.log(data);
-    this.setState({
-      result: data.result,
-    });
+    fetch(url, options)
+      .then((response) => response.json())
+      .then((data) => {
+        this.setState({
+          result: data.result,
+        });
+      });
   };
 
   handleInput = (event) => {
