@@ -98,7 +98,6 @@ export class Calculator extends Component {
                     <Form.Control
                       required
                       name="number1"
-                      placeholder=""
                       type="number"
                       value={this.state.number1}
                       onChange={this.handleInput}
@@ -111,7 +110,6 @@ export class Calculator extends Component {
                     <Form.Control
                       required
                       name="number2"
-                      placeholder=""
                       type="number"
                       value={this.state.number2}
                       onChange={this.handleInput}
@@ -127,11 +125,10 @@ export class Calculator extends Component {
                       as="select"
                       required
                       name="calculation"
-                      placeholder=""
                       value={this.state.calculation}
                       onChange={this.handleInput}
                     >
-                      <option></option>
+                      <option value="" disabled selected></option>
                       <option key="combined" value="combined">
                         Combined With
                       </option>
@@ -153,7 +150,6 @@ export class Calculator extends Component {
                 Reset
               </Button>
             </Form>
-
             <ResultAlert {...this.state} />
           </Card.Body>
         </Card>
